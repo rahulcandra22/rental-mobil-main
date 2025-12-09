@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Riwayat Pesanan Saya</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+  </head>
+  <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 pt-16 min-h-screen flex flex-col">
+    {{template "navbar.html" .}}
+
+    <main class="flex-grow container mx-auto p-4 sm:px-6 lg:px-8 py-8">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Riwayat Pesanan Saya</h1>
+
+      <!-- On mobile, we can show cards instead of a table -->
+      <div class="space-y-4 md:hidden">
+        {{range .Orders}}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div class="flex items-center mb-3">
+            {{if .Car.Images}}
+              <img class="h-16 w-24 rounded-md object-cover" src="{{(index .Car.Images 0).URL}}" alt="{{.Car.Name}}" />
+            {{end}}
+            <div class="ml-4">
+              <div class="font-bold text-gray-900 dark:text-white">{{.Car.Name}}</div>
+              <div class="text-sm text-cyan-500 dark:text-cyan-400 font-semibold">Rp {{.TotalPrice}}</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+            <p><strong>Ambil:</strong> {{.PickupDate.Format "2 Jan 2006"}}</p>
+            <p><strong>Kembali:</strong> {{.ReturnDate.Format "2 Jan 2006"}}</p>
+          </div>
+          <div class="mt-3 flex justify-between items-center">
+            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+              {{if eq .Status "completed"}} bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20
+              {{else if eq .Status "confirmed"}} bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20
+              {{else if eq .Status "canceled"}} bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20
+              {{else}} bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/20 {{end}}">
+              {{.Status}}
+            </span>
+            {{if eq .Status "pending"}}
+              <a href="/pesanan/bayar/{{.ID}}" class="text-cyan-500 dark:text-cyan-400 hover:underline font-semibold">Bayar</a>
+            {{end}}
+          </div>
+        </div>
+        {{else}}
+          <div class="text-center py-12 px-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <p class="text-gray-500">Anda belum memiliki riwayat pesanan.</p>
+          </div>
+        {{end}}
+      </div>
+
+      <!-- On desktop, show the table -->
+      <div class="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
+        <table class="min-w-full">
+          <thead class="bg-gray-50 dark:bg-gray-700/50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Mobil</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tgl Ambil</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tgl Kembali</th>
+              <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Harga</th>
+              <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            {{range .Orders}}
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-12 w-20">
+                    {{if .Car.Images}}
+                    <img class="h-12 w-20 rounded-md object-cover" src="{{(index .Car.Images 0).URL}}" alt="{{.Car.Name}}" />
+                    {{end}}
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{.Car.Name}}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{{.PickupDate.Format "2 Jan 2006"}}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{{.ReturnDate.Format "2 Jan 2006"}}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-cyan-500 dark:text-cyan-400 text-right font-semibold">Rp {{.TotalPrice}}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                  {{if eq .Status "completed"}} bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20
+                  {{else if eq .Status "confirmed"}} bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20
+                  {{else if eq .Status "canceled"}} bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20
+                  {{else}} bg-yellow-100 text-yellow-800 dark:bg-yellow-500/10 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/20 {{end}}">
+                  {{.Status}}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                {{if eq .Status "pending"}}
+                 <a href="/pesanan/bayar/{{.ID}}" class="text-cyan-500 dark:text-cyan-400 hover:underline">Bayar</a>
+                {{else}}
+                  <span class="text-gray-400">-</span>
+                {{end}}
+              </td>
+            </tr>
+            {{else}}
+            <tr>
+              <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                Anda belum memiliki riwayat pesanan.
+              </td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    {{template "footer.html" .}}
+
+    <script src="/static/js/theme.js"></script>
+  </body>
+</html>

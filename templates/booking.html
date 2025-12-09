@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking {{.Car.Name}}</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+  </head>
+  <body
+        class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 pt-16 min-h-screen flex flex-col"
+      >
+    {{template "navbar.html" .}}
+
+    <main class="flex-grow container mx-auto p-4 sm:px-6 lg:px-8 py-8">
+      <h1
+        class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center"
+      >
+        Formulir Pemesanan
+      </h1>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Booking Form -->
+        <div class="lg:col-span-2">
+          <form
+            action="/pesanan/buat"
+            method="post"
+            class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
+          >
+            <input type="hidden" name="car_id" value="{{.Car.ID}}" />
+            <input
+              type="hidden"
+              id="price_per_day"
+              value="{{.Car.PricePerDay}}"
+            />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label
+                  for="pickup_date"
+                  class="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2"
+                  >Tanggal Ambil</label
+                >
+                <input
+                  type="date"
+                  id="pickup_date"
+                  name="pickup_date"
+                  class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg w-full py-2 px-3 focus:ring-cyan-500 focus:border-cyan-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="return_date"
+                  class="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2"
+                  >Tanggal Kembali</label
+                >
+                <input
+                  type="date"
+                  id="return_date"
+                  name="return_date"
+                  class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg w-full py-2 px-3 focus:ring-cyan-500 focus:border-cyan-500"
+                  required
+                />
+              </div>
+            </div>
+            <div class="mb-6">
+              <label
+                for="pickup_location"
+                class="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2"
+                >Lokasi Pengambilan</label
+              >
+              <input
+                type="text"
+                id="pickup_location"
+                name="pickup_location"
+                class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg w-full py-2 px-3 focus:ring-cyan-500 focus:border-cyan-500"
+                placeholder="e.g., Bandara Ahmad Yani"
+                required
+              />
+            </div>
+            <div class="mb-6">
+              <label
+                for="return_location"
+                class="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2"
+                >Lokasi Pengembalian</label
+              >
+              <input
+                type="text"
+                id="return_location"
+                name="return_location"
+                class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white rounded-lg w-full py-2 px-3 focus:ring-cyan-500 focus:border-cyan-500"
+                placeholder="e.g., Stasiun Tawang"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-green-500 dark:bg-cyan-600 text-white font-bold py-3 rounded-lg hover:bg-green-600 dark:hover:bg-cyan-700 transition-colors"
+            >
+              Konfirmasi Pesanan
+            </button>
+          </form>
+        </div>
+
+        <!-- Summary -->
+        <div
+          class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 self-start"
+        >
+          <h2
+            class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-4"
+          >
+            Ringkasan
+          </h2>
+          {{if .Car.Images}}
+          <img
+            src="{{(index .Car.Images 0).URL}}"
+            alt="{{.Car.Name}}"
+            class="rounded-lg mb-4 w-full h-40 object-cover"
+          />
+          {{end}}
+          <h3
+            class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white"
+          >
+            {{.Car.Name}}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400">{{.Car.Transmission}}</p>
+          <div class="mt-6 space-y-3 text-gray-700 dark:text-gray-300">
+            <div class="flex justify-between">
+              <span>Harga per Hari</span>
+              <span class="font-medium text-gray-900 dark:text-white"
+                >Rp {{.Car.PricePerDay}}</span
+              >
+            </div>
+            <div class="flex justify-between">
+              <span>Lama Sewa</span>
+              <span
+                id="duration"
+                class="font-medium text-gray-900 dark:text-white"
+                >0 Hari</span
+              >
+            </div>
+            <div
+              class="flex justify-between font-bold text-lg sm:text-xl border-t border-gray-200 dark:border-gray-700 mt-3 pt-3"
+            >
+              <span class="text-gray-900 dark:text-white">Total Harga</span>
+              <span id="total_price" class="text-cyan-500 dark:text-cyan-400"
+                >Rp 0</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    {{template "footer.html" .}}
+
+    <script src="/static/js/theme.js"></script>
+    <script>
+      const pickupDateEl = document.getElementById("pickup_date");
+      const returnDateEl = document.getElementById("return_date");
+      const pricePerDay = parseFloat(
+        document.getElementById("price_per_day").value,
+      );
+      const today = new Date().toISOString().split("T")[0];
+      pickupDateEl.setAttribute("min", today);
+      returnDateEl.setAttribute("min", today);
+
+      function calculateTotal() {
+        const pickupDate = new Date(pickupDateEl.value);
+        const returnDate = new Date(returnDateEl.value);
+
+        if (pickupDateEl.value) {
+          returnDateEl.setAttribute("min", pickupDateEl.value);
+        }
+
+        if (
+          pickupDateEl.value &&
+          returnDateEl.value &&
+          returnDate >= pickupDate
+        ) {
+          const timeDiff = returnDate.getTime() - pickupDate.getTime();
+          const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include pickup day
+
+          if (dayDiff > 0) {
+            document.getElementById("duration").innerText = `${dayDiff} Hari`;
+            document.getElementById("total_price").innerText =
+              `Rp ${new Intl.NumberFormat("id-ID").format(dayDiff * pricePerDay)}`;
+          } else {
+            document.getElementById("duration").innerText = `1 Hari`;
+            document.getElementById("total_price").innerText =
+              `Rp ${new Intl.NumberFormat("id-ID").format(pricePerDay)}`;
+          }
+        } else {
+          document.getElementById("duration").innerText = `0 Hari`;
+          document.getElementById("total_price").innerText = `Rp 0`;
+        }
+      }
+
+      pickupDateEl.addEventListener("change", calculateTotal);
+      returnDateEl.addEventListener("change", calculateTotal);
+    </script>
+  </body>
+</html>

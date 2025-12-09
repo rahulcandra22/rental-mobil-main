@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selamat Datang - Rental Mobil Mewah</title>
+    <link href="/static/css/output.css" rel="stylesheet" />
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    </style>
+  </head>
+  <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 pt-16 min-h-screen flex flex-col">
+    
+    {{template "navbar.html" .}} 
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+      
+      <!-- Hero Section -->
+      <div class="text-center py-12 md:py-20 fade-in">
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          Temukan Mobil <span class="text-cyan-500 dark:text-cyan-400">Premium</span> Pilihan Anda
+        </h1>
+        <p class="mt-4 text-base md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Kami menyediakan pengalaman berkendara terbaik dengan koleksi mobil mewah yang terawat dan siap untuk setiap perjalanan Anda.
+        </p>
+      </div>
+
+      <!-- Search Bar -->
+      <form action="/" method="get" class="mb-12 max-w-2xl mx-auto">
+        <div class="relative">
+          <input
+            type="text"
+            name="q"
+            class="w-full px-5 py-3 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+            placeholder="Cari berdasarkan nama (e.g., Avanza, Civic)..."
+            value="{{.SearchQuery}}"
+          />
+          <button
+            type="submit"
+            class="absolute inset-y-0 right-0 flex items-center px-4 sm:px-6 bg-cyan-500 dark:bg-cyan-600 text-white font-semibold rounded-r-full hover:bg-cyan-600 dark:hover:bg-cyan-700 transition-colors duration-300"
+          >
+            Cari
+          </button>
+        </div>
+      </form>
+
+      <!-- Car Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {{range .DataMobil}}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-400/10">
+            {{if .IsAvailable}}
+                <a href="/mobil/detail/{{.ID}}" class="block group">
+            {{else}}
+                <div class="block opacity-60 cursor-not-allowed">
+            {{end}}
+
+                <div class="relative overflow-hidden">
+                    {{if .Images}}
+                        <img src="{{(index .Images 0).URL}}" alt="{{.Name}}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-110">
+                    {{else}}
+                        <div class="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                            <span class="text-gray-500">No Image</span>
+                        </div>
+                    {{end}}
+                    <div class="absolute inset-0 bg-black/10 dark:bg-black/20"></div>
+                </div>
+
+                <div class="p-5">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2 truncate">{{.Name}}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 h-12 overflow-hidden text-ellipsis text-sm">{{.Description}}</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <p class="text-lg font-semibold text-cyan-500 dark:text-cyan-400">Rp {{.PricePerDay}} <span class="text-sm font-normal text-gray-500">/ hari</span></p>
+                        
+                        {{if .IsAvailable}}
+                            <span class="bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20 py-1 px-3 rounded-full text-xs font-semibold">Tersedia</span>
+                        {{else}}
+                            <span class="bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20 py-1 px-3 rounded-full text-xs font-semibold">Disewa</span>
+                        {{end}}
+                    </div>
+                </div>
+            
+            {{if .IsAvailable}}
+                </a>
+            {{else}}
+                </div>
+            {{end}}
+        </div>
+        {{end}}
+      </div>
+    </main>
+
+    {{template "footer.html" .}}
+
+    <script src="/static/js/theme.js"></script>
+  </body>
+</html>

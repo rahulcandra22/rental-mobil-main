@@ -1,0 +1,19 @@
+# Go
+*.exe
+*.test
+*.out
+/vendor/
+
+# Node.js
+/static/node_modules/
+/static/dist/
+
+# IDEs and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
